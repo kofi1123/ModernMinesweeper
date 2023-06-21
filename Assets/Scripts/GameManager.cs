@@ -7,14 +7,18 @@ public class GameManager : MonoBehaviour
 {
     private GridManager gridManager;
 
+    public GameObject mainMenu;
+    public GameObject gameScene;
     public bool flagMode = false;
     public bool gameOver = false;
     public bool bombsRevealed = false;
     public bool firstMove = false;
+    public bool gameActive = false;
     // Start is called before the first frame update
     void Start()
     {
-        gridManager = GameObject.Find("/Canvas/Grid").GetComponent<GridManager>();
+        gridManager = GameObject.Find("/Canvas/GameScene/Grid").GetComponent<GridManager>();
+        setGameScene(false);
     }
 
     // Update is called once per frame
@@ -41,4 +45,15 @@ public class GameManager : MonoBehaviour
         this.bombsRevealed = false;
         this.firstMove = false;
     }
+
+    public void setMainMenu(bool active)
+    {
+        mainMenu.SetActive(active);
+    }
+
+    public void setGameScene(bool active)
+    {
+        gameScene.SetActive(active);
+    }
+
 }

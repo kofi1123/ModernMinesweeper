@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class GridManager : MonoBehaviour
 {
+    public GameManager gameManager;
     public GameObject[][] grid;
     public BombCount bombCount;
     public Canvas canvas;
@@ -17,8 +18,19 @@ public class GridManager : MonoBehaviour
     public int bombRadius;
     public int flagsLeft;
 
+    private Color[] neighborBombsColors = {
+        new Color(0f, 0.1137255f, 0.9294118f),
+        new Color(0.2078432f, 0.4745098f, 0.1294118f),
+        new Color(0.7041177f, 0.1921569f, 0.1333333f),
+        new Color(0f, 0f, 0.4588236f),
+        new Color(0.5215687f, 0f, 0f),
+        new Color(0.003921569f, 0.482353f, 0.5019608f),
+        Color.black,
+        new Color(0.4980392f, 0.4980392f, 0.4980392f)
+    };
+
     // Start is called before the first frame update
-    void Start()
+    public void setupGrid()
     {
         bombCount.bombsLeft = numBombs;
         grid = new GameObject[xMax][];
@@ -113,5 +125,26 @@ public class GridManager : MonoBehaviour
                 grid[i][j].GetComponent<GridNode>().resetNode();
             }
         }
+    }
+
+    public void checkGameEnd()
+    {
+        for (int i = 0; i < xMax; i += 1)
+        {
+            for (int j = 0; j < yMax; j += 1)
+            {
+                if (!grid[i][j].GetComponent<GridNode>().getIsClicked() && !grid[i][j].GetComponent<GridNode>().getIsBomb())
+                {
+                    return;
+                }
+            }
+        }
+        Debug.Log("You Won");
+        gameManager.gameOver = true;
+    }
+
+    public Color getNeighborBombsColors(int index)
+    {
+        return neighborBombsColors[index];
     }
 }

@@ -27,8 +27,8 @@ public class GridNode : MonoBehaviour
     void Awake()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        gridManager = GameObject.Find("/Canvas/Grid").GetComponent<GridManager>();
-        bombCount = GameObject.Find("/Canvas/BombCount").GetComponent<BombCount>();
+        gridManager = GameObject.Find("/Canvas/GameScene/Grid").GetComponent<GridManager>();
+        bombCount = GameObject.Find("/Canvas/GameScene/BombCount").GetComponent<BombCount>();
     }
 
     public void setGridNode(GameObject[][] grid, int x, int y, int xMax, int yMax)
@@ -107,6 +107,7 @@ public class GridNode : MonoBehaviour
             }
             this.clickRecursion();
         }
+        gridManager.checkGameEnd();
     }
 
     public void clickNumRecursion()
@@ -116,7 +117,11 @@ public class GridNode : MonoBehaviour
             gameManager.gameOver = true;
             return;
         }
-        gameObject.GetComponentsInChildren<Text>()[0].text = this.neighborBombs.ToString();
+        if (this.neighborBombs != 0)
+        {
+            gameObject.GetComponentsInChildren<Text>()[0].text = this.neighborBombs.ToString();
+            gameObject.GetComponentsInChildren<Text>()[0].color = gridManager.getNeighborBombsColors(this.neighborBombs - 1);
+        }
         if (this.topLeft && this.topLeft.GetComponent<GridNode>().isBomb && !this.topLeft.GetComponent<GridNode>().isFlagged)
         {
             gameManager.gameOver = true;
@@ -228,7 +233,11 @@ public class GridNode : MonoBehaviour
         }
         this.setIsClicked(true);
         gameObject.GetComponent<Image>().color = Color.gray;
-        gameObject.GetComponentsInChildren<Text>()[0].text = this.neighborBombs.ToString();
+        if (this.neighborBombs != 0)
+        {
+            gameObject.GetComponentsInChildren<Text>()[0].text = this.neighborBombs.ToString();
+            gameObject.GetComponentsInChildren<Text>()[0].color = gridManager.getNeighborBombsColors(this.neighborBombs - 1);
+        }
         if (this.neighborBombs == 0)
         {
             if (this.topLeft)
@@ -350,9 +359,19 @@ public class GridNode : MonoBehaviour
         gameObject.GetComponentsInChildren<Text>()[0].text = "";
     }
 
+    public bool getIsClicked()
+    {
+        return this.isClicked;
+    }
+
     public void setIsClicked(bool clicked)
     {
         this.isClicked = clicked;
+    }
+
+    public bool getIsBomb()
+    {
+        return this.isBomb;
     }
 
     public void setIsBomb(bool bomb)
@@ -365,12 +384,13 @@ public class GridNode : MonoBehaviour
         this.isFlagged = flagged;
     }
 
-    public void setNeighborBombs(int neighborBombs)
-    {
-        this.neighborBombs = neighborBombs;
-    }
     public int getNeighborBombs()
     {
         return this.neighborBombs;
+    }
+
+    public void setNeighborBombs(int neighborBombs)
+    {
+        this.neighborBombs = neighborBombs;
     }
 }
